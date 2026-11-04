@@ -35,11 +35,11 @@ def test_indicator_primitives_have_expected_shapes():
 
 
 def test_risk_guardian_blocks_stale_and_oversized_positions():
-    common = dict(
-        equity=5000, price=100, stop_loss=98, requested_quantity=11,
-        daily_loss_fraction=0, weekly_loss_fraction=0, open_positions=0,
-        asset_exposure=0, regime="bullish", data_fresh=True,
-    )
+    common = {
+        "equity": 5000, "price": 100, "stop_loss": 98, "requested_quantity": 11,
+        "daily_loss_fraction": 0, "weekly_loss_fraction": 0, "open_positions": 0,
+        "asset_exposure": 0, "regime": "bullish", "data_fresh": True,
+    }
     assert not evaluate_long_entry(**{**common, "data_fresh": False}).approved
     assert not evaluate_long_entry(**common).approved
 
