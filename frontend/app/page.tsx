@@ -7,10 +7,13 @@ export default function Home() {
   const [apiStatus, setApiStatus] = useState("Checking…");
   useEffect(() => {
     let active = true;
-    fetch("/api/health", { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(); return r.json(); })
+    const check = () => fetch("/api/health", { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(() => { if (active) setApiStatus("Connected"); })
       .catch(() => { if (active) setApiStatus("Unavailable"); });
-    return () => { active = false; };
+    void check();
+    const timer = window.setInterval(check, 15000);
+    return () => { active = false; window.clearInterval(timer); };
   }, []);
   return <div className="shell">
     <aside className="sidebar">
