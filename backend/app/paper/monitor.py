@@ -9,6 +9,10 @@ from app.db.models import MarketCandle, PaperAccount, PaperTrade
 from app.db.session import SessionLocal
 
 
+def _utc(value: datetime) -> datetime:
+    return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
+
+
 def run_once() -> int:
     closed = 0
     with SessionLocal() as session:
@@ -22,7 +26,7 @@ def run_once() -> int:
             ).scalar_one_or_none()
             if latest is None:
                 continue
-            age = (datetime.now(UTC) - latest.close_time).total_seconds()
+            age = (datetime.now(UTC) - _utc(latest.close_time)).total_seconds()
             if age < 0 or age > 180 or latest.low > trade.stop_loss:
                 continue
             account = session.get(PaperAccount, trade.account_id)
