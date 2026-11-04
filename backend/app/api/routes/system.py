@@ -1,5 +1,7 @@
 from fastapi import APIRouter
+
 router = APIRouter(tags=["system"])
+
 
 @router.get("/system/status")
 def system_status():
@@ -13,7 +15,7 @@ def system_status():
             "intraday_engine": "planned",
             "swing_engine": "planned",
             "paper_trading": "planned",
-            "ai_mentor": "planned"
-        }
+            "ai_mentor": "planned",
+        },
     }
 }
