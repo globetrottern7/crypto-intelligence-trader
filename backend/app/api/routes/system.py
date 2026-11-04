@@ -18,4 +18,3 @@ def system_status():
             "ai_mentor": "planned",
         },
     }
-}
