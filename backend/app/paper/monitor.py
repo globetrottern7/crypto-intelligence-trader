@@ -23,12 +23,13 @@ def run_once() -> int:
             if latest is None:
                 continue
             age = (datetime.now(UTC) - latest.close_time).total_seconds()
-            if age < 0 or age > 180 or latest.close > trade.stop_loss:
+            if age < 0 or age > 180 or latest.low > trade.stop_loss:
                 continue
             account = session.get(PaperAccount, trade.account_id)
             if account is None:
                 continue
-            exit_price = min(latest.close, trade.stop_loss) * (
+            raw_exit = min(latest.close, trade.stop_loss)
+            exit_price = raw_exit * (
                 Decimal(1) - Decimal(str(settings.paper_slippage_bps)) / Decimal(10000)
             )
             proceeds = trade.quantity * exit_price

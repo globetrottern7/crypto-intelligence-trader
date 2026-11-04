@@ -68,3 +68,27 @@ jobs:
       - run: npm install
       - run: npx tsc --noEmit
       - run: npm run build
+
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate development and production Compose files
+        env:
+          POSTGRES_DB: crypto_intelligence
+          POSTGRES_USER: crypto_app
+          POSTGRES_PASSWORD: ci_test_password
+          DATABASE_URL: postgresql+psycopg://crypto_app:ci_test_password@db:5432/crypto_intelligence
+          BACKEND_CORS_ORIGINS: http://localhost:3000
+          API_ACCESS_TOKEN: ci-api-token
+          DASHBOARD_PASSWORD: ci-dashboard-password
+          SESSION_SECRET: ci-session-secret-at-least-32-characters
+          BACKEND_IMAGE: ghcr.io/example/crypto-intelligence-backend:ci
+          FRONTEND_IMAGE: ghcr.io/example/crypto-intelligence-frontend:ci
+        run: |
+          docker compose -f docker-compose.yml config --quiet
+          docker compose -f docker-compose.production.yml config --quiet
+      - name: Build backend container
+        run: docker build -t crypto-intelligence-backend:ci ./backend
+      - name: Build frontend container
+        run: docker build -t crypto-intelligence-frontend:ci ./frontend
