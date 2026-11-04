@@ -1,0 +1,28 @@
+{
+  "name": "Crypto Intelligence Trader (Android-first cloud dev)",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "forwardPorts": [3000, 8000],
+  "portsAttributes": {
+    "3000": { "label": "Dashboard", "onAutoForward": "openBrowser" },
+    "8000": { "label": "FastAPI", "onAutoForward": "notify" }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteEnv": {
+    "DATABASE_URL": "postgresql+psycopg://crypto_app:change_me_codespaces@db:5432/crypto_intelligence",
+    "BACKEND_CORS_ORIGINS": "*",
+    "INTERNAL_API_BASE_URL": "http://127.0.0.1:8000"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.ruff",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}
