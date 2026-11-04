@@ -1,14 +1,17 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
+
 from app.db.session import engine
 
 router = APIRouter(tags=["health"])
+
 
 @router.get("/health")
 def health():
     """Liveness probe: confirms the API process is responding."""
     return {"status": "ok", "service": "api"}
+
 
 @router.get("/ready")
 def ready():
