@@ -76,7 +76,7 @@ def test_analysis_stale_data_is_never_actionable():
 
 
 def test_backtest_accounts_for_fees_and_slippage():
-    prices = [100 + (i if i < 30 else 60 - i) for i in range(80)]
+    prices = [120 - i for i in range(20)] + [101 + i for i in range(30)] + [129 - i for i in range(30)]
     rows = [candle(i, p) for i, p in enumerate(prices)]
     result = run_sma_crossover_backtest(
         rows, fast_period=3, slow_period=8, initial_capital=5000,
