@@ -1,27 +1,28 @@
 # Android-first development and usage
 
 ## Goal
-All project management, review and day-to-day access should be possible from the Android phone. Compute-heavy builds, tests, database and monitoring run in cloud services, not on the handset.
+The project is designed to be created, developed, reviewed and used from an Android phone. Compute-heavy builds, tests, database and monitoring run in cloud services, not on the handset.
+
+## Start a cloud development workspace from Android
+1. Open the repository in Chrome: https://github.com/globetrottern7/crypto-intelligence-trader
+2. Open **Code → Codespaces → Create codespace on main**. If the Codespaces option is missing, check GitHub account availability/billing; do not install a local toolchain as a workaround.
+3. Wait for the cloud workspace to initialise. The devcontainer installs backend and frontend dependencies and starts PostgreSQL.
+4. Open the integrated terminal and run `bash scripts/dev-start.sh`.
+5. In the Codespaces **Ports** panel, open port **3000** in the browser to use the dashboard on the phone. Port **8000** exposes the API for diagnostics.
+6. Keep the Codespace running while developing. Stop it from the Codespaces menu when finished to avoid consuming usage time.
 
 ## What runs where
-- Android phone: GitHub app/Chrome, dashboard/PWA, notifications and review.
-- GitHub: source control, issues, pull requests and CI workflow.
-- Cloud development environment (optional): GitHub Codespaces for terminal/editor sessions in a browser.
-- Cloud runtime (later milestone): frontend, FastAPI backend, PostgreSQL and background market-data workers.
-
-## Phone-only workflow
-1. Open the repository in Chrome or the GitHub app.
-2. Review code and commits; use the repository's Actions tab to inspect CI runs.
-3. For changes requiring a terminal, open the repository's Code menu and check whether Codespaces is available. If enabled, create a Codespace from `main` and use its browser editor/terminal.
-4. Run checks in that cloud environment or let GitHub Actions run them on commits/pull requests.
-5. Preview the dashboard using the cloud environment's forwarded port or the deployed preview URL.
-6. Install the eventual production PWA from Chrome's browser menu when the hosted application is ready.
+- Android phone: Chrome/GitHub app, browser editor/terminal, dashboard/PWA and review.
+- GitHub: source control, issues, pull requests and CI.
+- Codespaces: temporary cloud development machine and PostgreSQL container.
+- Production cloud runtime (later milestone): always-on frontend, API, PostgreSQL and market-data workers.
 
 ## Important constraints
-- Android itself is not the build server. Do not expect Docker Compose, PostgreSQL or a continuous market-data worker to run reliably on the phone.
-- A PWA installed on Android is the user interface, not the backend host. Market monitoring must continue in cloud infrastructure when the phone is offline.
-- Codespaces is optional and account-dependent. If unavailable, use GitHub Actions plus cloud deployment; no PC is required for ordinary review and use.
-- Never paste API secrets into chat, source files, screenshots or commits. Store them in the cloud provider's secret manager when integrations are introduced.
+- Android is the control centre and interface, not the build server.
+- A PWA is only the user interface; continuous market monitoring must run in cloud infrastructure even when the phone is offline.
+- Codespaces availability, included usage and billing depend on the GitHub account. Stop unused Codespaces.
+- If Codespaces is unavailable, CI and cloud deployment can still be used; do not assume the user has a PC.
+- Never paste API secrets into chat, source files, screenshots or commits. Store secrets in the cloud provider's secret manager when integrations are introduced.
 
 ## P0 safety boundary
-The application remains paper-trading only. No live exchange order execution or leverage is enabled.
+Paper trading only. No live exchange order execution or leverage is enabled.
