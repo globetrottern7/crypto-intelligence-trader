@@ -1,5 +1,4 @@
 from datetime import UTC, datetime
-from decimal import Decimal
 
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import func, select

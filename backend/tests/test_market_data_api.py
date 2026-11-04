@@ -5,10 +5,10 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.api.routes import market_data
 from app.db.base import Base
 from app.db.models import MarketCandle
 from app.main import app
-from app.api.routes import market_data
 
 
 def _session_factory():
@@ -50,8 +50,8 @@ def test_diagnostics_reports_fresh_and_stale_groups(monkeypatch):
             session.add(MarketCandle(
                 venue="coinswitch", symbol=symbol, interval="1m",
                 open_time=close_time - timedelta(minutes=1), close_time=close_time,
-                open=Decimal("100"), high=Decimal("101"), low=Decimal("99"),
-                close=Decimal("100"), volume=Decimal("1"), is_closed=True,
+                open=Decimal(100), high=Decimal(101), low=Decimal(99),
+                close=Decimal(100), volume=Decimal(1), is_closed=True,
             ))
         session.commit()
     try:
