@@ -1,0 +1,29 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/universal:2
+    command: sleep infinity
+    volumes:
+      - ..:/workspace:cached
+    environment:
+      DATABASE_URL: postgresql+psycopg://crypto_app:change_me_codespaces@db:5432/crypto_intelligence
+      BACKEND_CORS_ORIGINS: "*"
+      INTERNAL_API_BASE_URL: http://127.0.0.1:8000
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: crypto_intelligence
+      POSTGRES_USER: crypto_app
+      POSTGRES_PASSWORD: change_me_codespaces
+    volumes:
+      - codespaces_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crypto_app -d crypto_intelligence"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+volumes:
+  codespaces_postgres_data:
