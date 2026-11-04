@@ -1,6 +1,6 @@
 # Crypto Intelligence & Trading Assistant
 
-Personal, learning-first digital-asset intelligence and paper-trading system.
+Personal, learning-first digital-asset intelligence and paper-trading system. The project workflow is designed to be managed from an Android phone; a Windows PC or local Docker Desktop is not a requirement.
 
 ## P0 guardrails
 - Intraday universe: 30–50 liquid cryptocurrencies; swing research covers a broader screened universe.
@@ -9,16 +9,19 @@ Personal, learning-first digital-asset intelligence and paper-trading system.
 - Paper trading only. Live exchange order execution and leverage are out of scope for P0.
 - No fabricated prices or signals: market data must be connected and validated before scanner output is enabled.
 
-## Local setup
-Prerequisites: Docker Desktop with Compose, Node.js 20+ (for non-Docker frontend development), Python 3.11+.
+## Android-first project workflow
+1. Open this repository in Chrome on the Android phone: https://github.com/globetrottern7/crypto-intelligence-trader
+2. Use the GitHub mobile app or browser to review commits, files and pull requests.
+3. Code changes can be prepared and committed through the connected GitHub workflow; automated checks run in GitHub Actions.
+4. If interactive terminal work is needed, use GitHub Codespaces in the browser if it is enabled for the GitHub account. It provides a cloud development environment; it does not require installing Python, Node.js or Docker on the phone.
+5. Open forwarded web ports in the phone browser to preview the dashboard/API when a Codespace is running.
 
-1. Copy `.env.example` to `.env` and change the local database password.
-2. Run `docker compose up --build` from the repository root.
-3. Website: http://localhost:3000
-4. API liveness: http://localhost:8000/health
-5. API readiness (includes PostgreSQL connectivity): http://localhost:8000/ready
-6. API docs: http://localhost:8000/docs
+GitHub Codespaces availability and usage limits depend on the GitHub account. If it is unavailable, use GitHub Actions for automated builds/tests and a cloud deployment for phone-based preview. Do not install Docker Desktop or run the project locally on Android as a prerequisite.
 
-The backend applies Alembic migrations before starting. PostgreSQL data persists in the `postgres_data` Docker volume. To stop services use `docker compose down`; to remove local database data as well, use `docker compose down -v`.
+## Cloud service endpoints (when running)
+- Frontend: port 3000
+- API liveness: `/health` on port 8000
+- API readiness (includes PostgreSQL connectivity): `/ready` on port 8000
+- API docs: `/docs` on port 8000
 
-Never commit `.env`, API keys or exchange credentials. Backtests do not guarantee future profitability.
+The backend applies Alembic migrations before starting. PostgreSQL data persists in the configured database volume/service. Never commit `.env`, API keys or exchange credentials. Backtests do not guarantee future profitability.
