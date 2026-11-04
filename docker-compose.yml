@@ -15,8 +15,13 @@ services:
   backend:
     build: ./backend
     environment:
+      APP_ENV: ${APP_ENV:-development}
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://crypto_app:change_me_local_only@db:5432/crypto_intelligence}
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:3000}
+      API_ACCESS_TOKEN: ${API_ACCESS_TOKEN:-}
+      PAPER_INITIAL_CAPITAL: ${PAPER_INITIAL_CAPITAL:-5000}
+      PAPER_FEE_BPS: ${PAPER_FEE_BPS:-10}
+      PAPER_SLIPPAGE_BPS: ${PAPER_SLIPPAGE_BPS:-10}
     ports: ["8000:8000"]
     depends_on:
       db:
@@ -36,11 +41,23 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+  paper-monitor:
+    profiles: ["paper"]
+    build: ./backend
+    command: ["python", "-m", "app.paper.monitor"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://crypto_app:change_me_local_only@db:5432/crypto_intelligence}
+      PAPER_FEE_BPS: ${PAPER_FEE_BPS:-10}
+      PAPER_SLIPPAGE_BPS: ${PAPER_SLIPPAGE_BPS:-10}
+    depends_on:
+      backend:
+        condition: service_healthy
   frontend:
     build:
       context: ./frontend
     environment:
       INTERNAL_API_BASE_URL: http://backend:8000
+      BACKEND_API_TOKEN: ${API_ACCESS_TOKEN:-}
     ports: ["3000:3000"]
     depends_on: [backend]
 volumes:
