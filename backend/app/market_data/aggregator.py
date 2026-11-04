@@ -1,6 +1,7 @@
 # ruff: noqa: I001
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
+from itertools import pairwise
 
 from app.market_data.schemas import CandleInterval, OHLCVCandle
 
