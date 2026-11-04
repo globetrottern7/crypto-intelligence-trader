@@ -1,6 +1,6 @@
 from collections import deque
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
-from typing import Callable
 
 from sqlalchemy.orm import Session
 
