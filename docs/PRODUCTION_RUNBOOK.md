@@ -4,12 +4,12 @@
 1. Choose a cloud host supporting Docker Compose or equivalent long-running containers.
 2. Provision persistent PostgreSQL storage and encrypted backups.
 3. Configure HTTPS/TLS and a domain/reverse proxy for the frontend.
-4. Set a strong database password, database URL, long random API token, trusted CORS origin and paper cost assumptions in the host secret manager.
+4. Set strong database password, database URL, long random API token, dashboard password, session secret, trusted CORS origin and paper cost assumptions in the host secret manager.
 5. Never store credentials in Git, browser storage, Android app code or chat.
 6. Keep API and database private to the deployment network. Expose only HTTPS frontend and required health probes.
 
 ## Container images
-Run the GitHub Actions workflow "Publish container images" manually or push a version tag. It publishes backend and frontend images to GitHub Container Registry. Set BACKEND_IMAGE and FRONTEND_IMAGE to published immutable SHA tags in the production environment.
+Run the GitHub Actions workflow "Publish container images" manually or push a version tag. It publishes backend and frontend images to GitHub Container Registry. Set BACKEND_IMAGE and FRONTEND_IMAGE to published immutable SHA tags in production.
 
 ## Start services
 On the cloud host, set required environment variables and run:
@@ -23,7 +23,7 @@ Workers do not run on Android. Paper monitor polls every 15 seconds and acts onl
 ## Smoke tests
 - GET /health returns liveness.
 - GET /ready confirms PostgreSQL connectivity.
-- Through authenticated frontend proxy, inspect market-data status and diagnostics.
+- Sign in to the dashboard; its server-side proxy then authenticates to the backend.
 - Confirm migration head includes 0003_paper_portfolio.
 - Verify no live order endpoints exist.
 - Verify paper entry is rejected without fresh data, a confirmed bullish candidate, or risk approval.

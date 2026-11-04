@@ -38,6 +38,8 @@ services:
     environment:
       INTERNAL_API_BASE_URL: http://backend:8000
       BACKEND_API_TOKEN: ${API_ACCESS_TOKEN:?set API_ACCESS_TOKEN}
+      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD:?set DASHBOARD_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET}
     ports: ["3000:3000"]
     depends_on:
       backend:

@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isDashboardSessionValid, SESSION_COOKIE } from "@/lib/session";
+
 type RouteContext = { params: Promise<{ path: string[] }> };
 
 export async function GET(request: NextRequest, context: RouteContext) {
+  if (!isDashboardSessionValid(request.cookies.get(SESSION_COOKIE)?.value)) {
+    return NextResponse.json({ detail: "Dashboard login required." }, { status: 401 });
+  }
   const base = process.env.INTERNAL_API_BASE_URL;
   if (!base) return NextResponse.json(
     { detail: "Backend URL is not configured. Dashboard is in preview mode." }, { status: 503 }

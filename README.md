@@ -21,15 +21,17 @@ If Codespaces is unavailable, the repository can still be reviewed from Android 
 - M6: Persistent INR paper ledger, fee/slippage simulation and stop-loss monitor.
 - M7: Deterministic risk guardian with per-trade, daily, weekly, position-count and asset-exposure limits.
 - M8: Explain-only mentor layer; optional LLM integration is not enabled.
-- M9: Responsive Android-first dashboard and server-side API proxy.
+- M9: Responsive Android-first dashboard with password-protected server-side API proxy.
 - M10: Production Compose file, API bearer-token protection and GHCR publishing workflow.
 
 See docs/M3_M10_DELIVERY.md and docs/PRODUCTION_RUNBOOK.md.
 
 ## Key endpoints
+
 /health; /ready; /api/v1/system/status; /api/v1/market-data/status; /api/v1/market-data/diagnostics; /api/v1/intelligence/analyse; /api/v1/intelligence/scan; /api/v1/intelligence/backtest; /api/v1/paper/portfolio; /api/v1/paper/trades; /api/v1/paper/trades/open; /api/v1/paper/trades/close; /api/v1/paper/monitor.
 
 ## Safety
+
 Paper trading only. No live exchange order execution, leverage or futures. Risk controls are deterministic; AI explanations cannot override them. No fabricated prices or signals: a scanner must have validated, fresh, complete candles. Backtests do not guarantee future profitability. Fees/slippage defaults are illustrative, not verified venue fees. Tax calculations are not included.
 
-Never commit .env, API keys or exchange credentials. Production API routes require a server-side bearer token. Keep PostgreSQL private and use persistent storage/backups.
+Never commit .env, API keys or exchange credentials. Production API routes require a server-side bearer token and dashboard login. Keep PostgreSQL private and use persistent storage/backups.
