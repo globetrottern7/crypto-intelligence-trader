@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 
 class CandleInterval(StrEnum):
+    M1 = "1m"
     M5 = "5m"
     M15 = "15m"
     H1 = "1h"

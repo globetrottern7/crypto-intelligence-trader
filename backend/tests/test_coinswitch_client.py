@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC
 from decimal import Decimal
 
 import httpx
@@ -13,9 +13,7 @@ def test_signing_matches_ed25519_message_contract():
     seed = bytes(range(32))
     client = CoinSwitchSpotClient("public-key-hex", seed.hex(), http_client=httpx.Client())
     headers, path = client._signed_path(
-        "GET",
-        "/trade/api/v2/candles",
-        {"symbol": "BTC/INR", "interval": "5"},
+        "GET", "/trade/api/v2/candles", {"symbol": "BTC/INR", "interval": "5"},
         epoch_ms=1719905777483,
     )
     message = f"GET{path}1719905777483".encode()
@@ -29,23 +27,18 @@ def test_fetch_candles_normalises_provider_payload():
     seed = bytes(range(32))
     response = httpx.Response(
         200,
-        json={
-            "data": [{
-                "o": "100.25", "h": "105", "l": "99", "c": "103",
-                "volume": "2.5", "symbol": "BTC/INR", "interval": "5",
-                "start_time": "1798761600000", "close_time": "1798761900000",
-            }]
-        },
+        json={"data": [{
+            "o": "100.25", "h": "105", "l": "99", "c": "103", "volume": "2.5",
+            "symbol": "BTC/INR", "interval": "5",
+            "start_time": "1798761600000", "close_time": "1798761900000",
+        }]},
         request=httpx.Request("GET", "https://coinswitch.co"),
     )
-    transport = httpx.MockTransport(lambda request: response)
-    http = httpx.Client(transport=transport)
+    http = httpx.Client(transport=httpx.MockTransport(lambda request: response))
     client = CoinSwitchSpotClient("public-key-hex", seed.hex(), http_client=http)
     candles = client.fetch_candles(
-        symbol="BTC/INR",
-        interval=CandleInterval.M5,
-        start_time_ms=1798761600000,
-        end_time_ms=1798761900000,
+        symbol="BTC/INR", interval=CandleInterval.M5,
+        start_time_ms=1798761600000, end_time_ms=1798761900000,
     )
     assert len(candles) == 1
     assert candles[0].venue == "coinswitchx"

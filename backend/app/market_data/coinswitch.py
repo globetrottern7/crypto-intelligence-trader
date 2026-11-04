@@ -1,6 +1,6 @@
+import time
 from datetime import UTC, datetime
 from decimal import Decimal
-import time
 from urllib.parse import unquote_plus, urlencode
 
 import httpx
@@ -24,14 +24,7 @@ INTERVAL_MINUTES = {
 class CoinSwitchSpotClient:
     """Read-only historical market-data client. It exposes no order methods."""
 
-    def __init__(
-        self,
-        api_key: str,
-        secret_key_hex: str,
-        *,
-        http_client: httpx.Client | None = None,
-        base_url: str = BASE_URL,
-    ):
+    def __init__(self, api_key: str, secret_key_hex: str, *, http_client=None, base_url=BASE_URL):
         if not api_key or not secret_key_hex:
             raise ValueError("CoinSwitch API key and secret are required")
         try:
@@ -46,18 +39,16 @@ class CoinSwitchSpotClient:
         self._http = http_client or httpx.Client(timeout=15.0)
         self._owns_http_client = http_client is None
 
-    def close(self) -> None:
+    def close(self):
         if self._owns_http_client:
             self._http.close()
 
-    def _signed_path(
-        self, method: str, path: str, params: dict[str, str], epoch_ms: int | None = None
-    ) -> tuple[dict[str, str], str]:
+    def _signed_path(self, method, path, params, epoch_ms=None):
         query = urlencode(params)
         encoded_path = f"{path}?{query}" if query else path
         decoded_path = unquote_plus(encoded_path)
         epoch = str(epoch_ms if epoch_ms is not None else int(time.time() * 1000))
-        message = f"{method.upper()}{decoded_path}{epoch}".encode("utf-8")
+        message = f"{method.upper()}{decoded_path}{epoch}".encode()
         signature = self._private_key.sign(message).hex()
         return (
             {
@@ -70,13 +61,7 @@ class CoinSwitchSpotClient:
         )
 
     def fetch_candles(
-        self,
-        *,
-        symbol: str,
-        interval: CandleInterval,
-        start_time_ms: int,
-        end_time_ms: int,
-        exchange: str = "coinswitchx",
+        self, *, symbol, interval, start_time_ms, end_time_ms, exchange="coinswitchx"
     ) -> list[OHLCVCandle]:
         if not symbol or "/" not in symbol:
             raise ValueError("symbol must use BASE/QUOTE format, e.g. BTC/INR")
@@ -92,13 +77,12 @@ class CoinSwitchSpotClient:
         headers, signed_path = self._signed_path("GET", CANDLES_PATH, params)
         response = self._http.get(self.base_url + signed_path, headers=headers)
         response.raise_for_status()
-        payload = response.json()
-        rows = payload.get("data")
+        rows = response.json().get("data")
         if not isinstance(rows, list):
-            raise ValueError("CoinSwitch candles response did not contain a data array")
+            raise TypeError("CoinSwitch candles response data must be an array")
 
         now = datetime.now(UTC)
-        candles: list[OHLCVCandle] = []
+        candles = []
         for row in rows:
             open_time = datetime.fromtimestamp(int(row["start_time"]) / 1000, tz=UTC)
             close_time = datetime.fromtimestamp(int(row["close_time"]) / 1000, tz=UTC)

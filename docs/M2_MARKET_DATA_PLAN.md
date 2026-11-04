@@ -1,31 +1,26 @@
 # M2 — Market Data Intelligence
 
-## Objective
-Establish a trustworthy, venue-aware historical and live market-data layer before enabling scanners or signals. No exchange provider has been selected or configured yet.
-
-## Implemented foundation
-- Immutable OHLCV candle contract with venue, symbol, interval and UTC timestamps.
-- Validation for positive prices, non-negative volume, candle time ordering and OHLC consistency.
+## Implemented
+- Venue-aware OHLCV candle schema with UTC normalisation and OHLC validation.
 - Deterministic SMA, EMA and Wilder RSI primitives.
-- API status endpoint that explicitly reports provider-pending and live ingestion disabled.
-- Automated tests for candle validation and indicator edge cases.
+- CoinSwitch PRO signed historical spot-candle REST client (read-only).
+- CoinSwitch public 1-minute Socket.IO candle stream adapter (read-only).
+- Complete-minute aggregation into 5m, 15m, 1h, 4h, 1d and 1w candles; incomplete groups are discarded.
+- Candle freshness gate.
+- PostgreSQL market-candle model and Alembic migration with venue/symbol/interval/open-time uniqueness.
+- Idempotent repository persistence through SQLAlchemy merge.
+- Tests for signatures, payload normalisation, aggregation, freshness and invalid stream events.
 
-## Next delivery slices
-1. Provider evaluation: India accessibility, API reliability, spot market coverage, WebSocket + REST support, historical depth, rate limits, fees, terms/licensing and uptime.
-2. Venue-aware instrument registry and allowlisted spot universe; stablecoins classified as reserve/liquidity assets rather than default directional trades.
-3. Historical OHLCV ingestion, deduplication, gap detection, closed-candle handling and provenance.
-4. Live WebSocket ingestion with REST reconciliation, reconnect/backfill and stale-feed circuit breaker.
-5. Quality monitoring: delayed/out-of-order candles, duplicates, impossible ranges, volume anomalies and venue outages.
-6. Persist candles and feed health in PostgreSQL with migrations and retention policy.
-7. Only after data quality gates: multi-timeframe feature pipeline and research/backtesting datasets.
+## Provider evidence
+CoinSwitch official Spot REST candles use exchange, BASE/QUOTE symbol, interval in minutes, start_time and end_time. Responses contain OHLCV plus start_time and close_time. The public Socket.IO v4 stream emits one-minute candles using FETCH_CANDLESTICK_CS_PRO and BASE,QUOTE symbols. Historical REST uses Ed25519 signing. See docs/PROVIDER_EVALUATION.md.
 
-## Required safeguards
-- Never combine venues or quote currencies silently.
-- Never use an unfinished candle as a confirmed close.
-- Block downstream signals on stale, missing or invalid data.
-- Preserve source, venue, symbol, interval, event time and ingestion time.
-- Backtests must account for fees, spread, slippage, liquidity, partial fills and survivorship/look-ahead bias.
-- Paper-only; no live order endpoint or exchange trading credential in M2.
+## Runtime status
+Adapters and persistence are implemented, but no cloud worker is running yet. No API credentials have been configured, and no live market data is claimed. The stream adapter is opt-in and does not start automatically. Runtime connectivity, actual provider responses and PostgreSQL writes must be verified in cloud before production readiness.
 
-## Provider decision gate
-Do not hard-code a provider until current documentation, geographic availability, market coverage, historical limits, WebSocket behaviour, rate limits and commercial terms have been checked. CoinSwitch PRO is a candidate for later execution/data evaluation, not an assumed compatible provider.
+## Safety gates
+- Only closed candles enter aggregation.
+- Missing-minute or non-contiguous groups are not emitted as complete aggregate candles.
+- Preserve venue, pair and source timestamps.
+- Do not average or silently merge prices across venues.
+- Stale, future-dated or invalid data blocks downstream signals.
+- No exchange order methods, live execution, futures or leverage in this milestone.
