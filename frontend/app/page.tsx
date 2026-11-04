@@ -1,14 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 const navigation = ["Overview","Market Scanner","Opportunity Radar","Coin Intelligence","Historical Intelligence","Strategy Lab","Intraday Trading","Swing Trading","Paper Portfolio","Trading Journal","Performance Analytics","AI Mentor"];
 
 export default function Home() {
   const [apiStatus, setApiStatus] = useState("Checking…");
   useEffect(() => {
     let active = true;
-    fetch(`${apiBase}/health`).then(r => { if (!r.ok) throw new Error(); return r.json(); })
+    fetch("/api/health", { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(() => { if (active) setApiStatus("Connected"); })
       .catch(() => { if (active) setApiStatus("Unavailable"); });
     return () => { active = false; };
