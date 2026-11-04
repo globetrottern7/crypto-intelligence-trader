@@ -1,27 +1,34 @@
 # Crypto Intelligence & Trading Assistant
 
-Personal, learning-first digital-asset intelligence and paper-trading system. The project workflow is designed to be managed from an Android phone; a Windows PC or local Docker Desktop is not a requirement.
+Personal, learning-first digital-asset intelligence and paper-trading system. **Designed to be developed and used from an Android phone.** No PC, local Docker or local Python setup is required for the intended workflow.
+
+## Android-first development
+
+1. Open the repository in Chrome on Android: https://github.com/globetrottern7/crypto-intelligence-trader
+2. In GitHub, open **Code → Codespaces → Create codespace on main** (if Codespaces is enabled for your account).
+3. Wait for the cloud workspace to build. First setup installs Python dependencies and frontend packages automatically.
+4. In the Codespaces terminal, run:
+   `bash scripts/dev-start.sh`
+5. Open the forwarded **port 3000** link to use the dashboard on your phone. Port 8000 is the API.
+6. Use the **Actions** tab in GitHub to monitor automated tests and builds.
+
+If Codespaces is not available on your account, the repository can still be reviewed from Android and CI can run in GitHub Actions. A cloud deployment will provide the hosted dashboard once configured. Codespaces usage limits and availability depend on your GitHub plan/account.
+
+## Local endpoints inside the cloud workspace
+
+- Dashboard: forwarded port 3000
+- API liveness: forwarded port 8000, `/health`
+- API readiness: forwarded port 8000, `/ready`
+- API docs: forwarded port 8000, `/docs`
+
+The devcontainer includes PostgreSQL and applies Alembic migrations when the development start script runs.
 
 ## P0 guardrails
+
 - Intraday universe: 30–50 liquid cryptocurrencies; swing research covers a broader screened universe.
 - Stablecoins are liquidity/reserve instruments with separate depeg and issuer-risk monitoring.
 - Quantitative calculations and risk controls are deterministic; AI explains but cannot authorise trades.
 - Paper trading only. Live exchange order execution and leverage are out of scope for P0.
 - No fabricated prices or signals: market data must be connected and validated before scanner output is enabled.
 
-## Android-first project workflow
-1. Open this repository in Chrome on the Android phone: https://github.com/globetrottern7/crypto-intelligence-trader
-2. Use the GitHub mobile app or browser to review commits, files and pull requests.
-3. Code changes can be prepared and committed through the connected GitHub workflow; automated checks run in GitHub Actions.
-4. If interactive terminal work is needed, use GitHub Codespaces in the browser if it is enabled for the GitHub account. It provides a cloud development environment; it does not require installing Python, Node.js or Docker on the phone.
-5. Open forwarded web ports in the phone browser to preview the dashboard/API when a Codespace is running.
-
-GitHub Codespaces availability and usage limits depend on the GitHub account. If it is unavailable, use GitHub Actions for automated builds/tests and a cloud deployment for phone-based preview. Do not install Docker Desktop or run the project locally on Android as a prerequisite.
-
-## Cloud service endpoints (when running)
-- Frontend: port 3000
-- API liveness: `/health` on port 8000
-- API readiness (includes PostgreSQL connectivity): `/ready` on port 8000
-- API docs: `/docs` on port 8000
-
-The backend applies Alembic migrations before starting. PostgreSQL data persists in the configured database volume/service. Never commit `.env`, API keys or exchange credentials. Backtests do not guarantee future profitability.
+Never commit `.env`, API keys or exchange credentials. Backtests do not guarantee future profitability.
