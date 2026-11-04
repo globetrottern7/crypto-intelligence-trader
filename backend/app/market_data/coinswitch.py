@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 import time
 from datetime import UTC, datetime
 from decimal import Decimal

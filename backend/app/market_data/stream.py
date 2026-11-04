@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal

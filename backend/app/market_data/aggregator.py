@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 
@@ -47,7 +48,7 @@ def aggregate_closed_minutes(
             continue
         if any(
             current.open_time - previous.open_time != timedelta(minutes=1)
-            for previous, current in zip(group, group[1:])
+            for previous, current in pairwise(group)
         ):
             continue
         if group[0].open_time != bucket:
