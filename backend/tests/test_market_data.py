@@ -15,10 +15,10 @@ def sample_candle(**overrides):
         "interval": "5m",
         "open_time": datetime(2026, 1, 1, tzinfo=UTC),
         "close_time": datetime(2026, 1, 1, tzinfo=UTC) + timedelta(minutes=5),
-        "open": Decimal("100"),
-        "high": Decimal("110"),
-        "low": Decimal("95"),
-        "close": Decimal("105"),
+        "open": Decimal(100),
+        "high": Decimal(110),
+        "low": Decimal(95),
+        "close": Decimal(105),
         "volume": Decimal("2.5"),
         "is_closed": True,
     }
@@ -34,7 +34,7 @@ def test_candle_accepts_valid_ohlcv_and_normalises_utc():
 
 def test_candle_rejects_invalid_ohlc():
     with pytest.raises(ValidationError):
-        OHLCVCandle(**sample_candle(high=Decimal("101")))
+        OHLCVCandle(**sample_candle(high=Decimal(101)))
 
 
 def test_candle_rejects_naive_timestamp():
